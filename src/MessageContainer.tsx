@@ -69,22 +69,22 @@ export interface MessageContainerProps<TMessage extends IMessage> {
   renderFooter?(props: MessageContainerProps<TMessage>): React.ReactNode
   renderMessage?(props: Message['props']): React.ReactNode
   renderLoadEarlier?(props: LoadEarlier['props']): React.ReactNode
-  scrollToBottomComponent?(): React.ReactNode
+  scrollToBottomComponent?(onPress: () => void): React.ReactNode
   onLoadEarlier?(): void
 }
 
 export default class MessageContainer<
   TMessage extends IMessage = IMessage
-> extends React.PureComponent<
+  > extends React.PureComponent<
   MessageContainerProps<TMessage>,
   { showScrollBottom: boolean }
-> {
+  > {
   static defaultProps = {
     messages: [],
     user: {},
     renderFooter: null,
     renderMessage: null,
-    onLoadEarlier: () => {},
+    onLoadEarlier: () => { },
     inverted: true,
     loadEarlier: false,
     listViewProps: {},
@@ -267,27 +267,14 @@ export default class MessageContainer<
     <View style={styles.headerWrapper}>{this.renderLoadEarlier()}</View>
   )
 
-  renderScrollBottomComponent() {
+  renderScrollToBottomWrapper() {
     const { scrollToBottomComponent } = this.props
 
     if (scrollToBottomComponent) {
-      return scrollToBottomComponent()
+
+      return scrollToBottomComponent(onPress: this.scrollToBottom)
     }
-
-    return <Text>V</Text>
-  }
-
-  renderScrollToBottomWrapper() {
-    return (
-      <View style={styles.scrollToBottomStyle}>
-        <TouchableOpacity
-          onPress={this.scrollToBottom}
-          hitSlop={{ top: 5, left: 5, right: 5, bottom: 5 }}
-        >
-          {this.renderScrollBottomComponent()}
-        </TouchableOpacity>
-      </View>
-    )
+    return null
   }
 
   keyExtractor = (item: TMessage) => `${item._id}`
